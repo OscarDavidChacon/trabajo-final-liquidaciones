@@ -1,0 +1,14 @@
+# Blueprint de Render para Pipeline_Liquidaciones_Ganado.
+# Despliegue sin base de datos y sin APIs de IA: todo se calcula en memoria.
+services:
+  - type: web
+    name: pipeline-liquidaciones-ganado
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.10"
+      - key: SECRET_KEY
+        generateValue: true

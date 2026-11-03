@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titulo %}Informe · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Informe · Informe gerencial</h1>
+
+{% if not datos %}
+  <div class="panel">
+    <p>Genere el informe gerencial a partir del análisis del dashboard. Se redacta con plantillas en Python (sin IA) y cada cifra se verifica contra los cálculos reales.</p>
+    <form method="post" action="{{ url_for('main.informe_generar') }}">
+      <button type="submit" style="padding:10px 18px;border:0;border-radius:8px;background:#2ea043;color:#fff;font-size:15px;cursor:pointer">
+        Generar informe
+      </button>
+    </form>
+  </div>
+{% elif datos.error %}
+  <div class="panel">
+    <h2>No se pudo generar el informe</h2>
+    <span class="estado no">{{ datos.error }}</span>
+  </div>
+{% else %}
+  <div class="grid" style="grid-template-columns:1.6fr 1fr;align-items:start">
+    <div class="panel">
+      <h2>Informe gerencial</h2>
+      <div class="informe">{{ informe_html|safe }}</div>
+    </div>
+    <div class="panel">
+      <h2>Cifras verificadas</h2>
+      {% if verificadas %}
+        <ul style="max-height:220px;overflow:auto">
+          {% for c in verificadas %}<li><span class="estado ok">{{ c.numero }}</span> <small>{{ c.frase }}</small></li>{% endfor %}
+        </ul>
+      {% else %}<p>—</p>{% endif %}
+      <h2>No verificadas</h2>
+      {% if no_verificadas %}
+        <ul style="max-height:220px;overflow:auto">
+          {% for c in no_verificadas %}<li><span class="estado no">{{ c.numero }}</span> <small>{{ c.frase }}</small></li>{% endfor %}
+        </ul>
+      {% else %}<p><span class="estado ok">Ninguna</span></p>{% endif %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Aprobación</h2>
+    <form method="post" action="{{ url_for('main.informe_decision') }}">
+      <p><label>Autor: <input type="text" name="autor" value="Responsable de liquidaciones (supuesto)"
+        style="padding:6px;border-radius:6px;border:1px solid #243444;background:#0b1219;color:#e8eef5"></label></p>
+      <p><textarea name="informe" style="width:100%;min-height:200px;padding:8px;border-radius:8px;border:1px solid #243444;background:#0b1219;color:#e8eef5">{{ datos.informe }}</textarea></p>
+      <p><textarea name="comentario" required placeholder="Comentario obligatorio"
+        style="width:100%;min-height:70px;padding:8px;border-radius:8px;border:1px solid #243444;background:#0b1219;color:#e8eef5"></textarea></p>
+      <button type="submit" name="accion" value="aprobar" style="padding:10px 18px;border:0;border-radius:8px;background:#2ea043;color:#fff;font-size:15px;cursor:pointer">Aprobar y guardar</button>
+      <button type="submit" name="accion" value="rechazar" style="margin-left:10px;padding:10px 18px;border:0;border-radius:8px;background:#a13b3b;color:#fff;font-size:15px;cursor:pointer">Rechazar</button>
+    </form>
+    {% if aprobado %}
+      <p style="margin-top:12px"><span class="estado ok">Informe aprobado</span>
+        <a class="estado info" href="{{ url_for('main.descargar', archivo='informe_gerencial.md') }}">descargar informe_gerencial.md</a></p>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Limpiar · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Limpiar · Reglas aplicadas y bitácora</h1>
+
+{% if not bitacora %}
+  <div class="panel">Todavía no se ha ejecutado la limpieza. Vaya a <a href="{{ url_for('main.inicio') }}">Inicio</a> y pulse «Ejecutar limpieza y validación».</div>
+{% else %}
+  <div class="panel">
+    <h2>Bitácora</h2>
+    <p>Una fila por regla, con las filas afectadas.</p>
+    <table>
+      <thead><tr><th>Regla</th><th>Acción</th><th>Tabla</th><th>Descripción</th><th class="num">Filas afectadas</th></tr></thead>
+      <tbody>
+        {% for b in bitacora %}
+        <tr>
+          <td>{{ b.regla }}</td>
+          <td><span class="estado {{ 'ok' if b.accion == 'Corregir' else ('no' if b.accion == 'Eliminar' else 'alerta') }}">{{ b.accion }}</span></td>
+          <td>{{ b.tabla }}</td>
+          <td>{{ b.descripcion }}</td>
+          <td class="num">{{ b.filas_afectadas|miles }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Base limpia</h2>
+    <p>{{ base_filas|miles }} filas · {{ base_columnas|miles }} columnas (una fila por liquidacion_id + Número).</p>
+    <p>Eliminadas por reglas de Eliminar: <strong>{{ eliminados|length|miles }}</strong>.</p>
+  </div>
+{% endif %}
+{% endblock %}

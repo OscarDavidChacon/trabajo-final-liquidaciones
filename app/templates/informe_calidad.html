@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block titulo %}Informe calidad · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Informe calidad · Informe de calidad</h1>
+
+{% if not datos %}
+  <div class="panel">
+    <p>Genere el informe de calidad a partir de los hallazgos y las cifras de la última ejecución. Las propuestas se construyen con reglas escritas en Python (sin IA) y se verifican contra los datos reales.</p>
+    <form method="post" action="{{ url_for('main.informe_calidad_generar') }}">
+      <button type="submit" style="padding:10px 18px;border:0;border-radius:8px;background:#2ea043;color:#fff;font-size:15px;cursor:pointer">
+        Generar informe de calidad
+      </button>
+    </form>
+  </div>
+{% elif datos.error %}
+  <div class="panel">
+    <h2>No se pudo generar el informe</h2>
+    <span class="estado no">{{ datos.error }}</span>
+  </div>
+{% else %}
+  <div class="panel">
+    <h2>Propuestas (verificadas por Python)</h2>
+    <table>
+      <thead><tr><th>Hallazgo</th><th>Acción propuesta</th><th>Regla aplicada</th><th>¿Coincide?</th><th>Justificación</th></tr></thead>
+      <tbody>
+        {% for p in verificacion %}
+        <tr>
+          <td>{{ p.hallazgo_id }} <span class="estado {{ 'no' if p.estado != 'existe' else 'ok' }}">{{ p.estado }}</span></td>
+          <td>{{ p.accion }}</td>
+          <td>{{ p.aplicada }}</td>
+          <td>
+            {% if p.coincide is none %}—{% elif p.coincide %}<span class="estado ok">coincide</span>{% else %}<span class="estado alerta">difiere</span>{% endif %}
+          </td>
+          <td>{{ p.justificacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if alertas %}
+  <div class="panel">
+    <h2>Alertas de seguridad</h2>
+    <ul>{% for a in alertas %}<li>{{ a }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Informe de calidad</h2>
+    <h3>Resumen ejecutivo</h3>
+    <p>{{ informe_html.resumen_ejecutivo|safe }}</p>
+    <h3>Riesgos para el análisis</h3>
+    <ul>{% for r in informe_html.riesgos %}<li>{{ r|safe }}</li>{% endfor %}</ul>
+    <h3>Recomendaciones</h3>
+    <ul>{% for r in informe_html.recomendaciones %}<li>{{ r|safe }}</li>{% endfor %}</ul>
+    <p>Cifras verificadas: <strong>{{ cifras.verificadas|length }}</strong> ·
+       No verificadas: <strong>{{ cifras.no_verificadas|length }}</strong></p>
+  </div>
+
+  <div class="panel">
+    <h2>Decisión</h2>
+    {% if decision %}
+      <p><span class="estado {{ 'ok' if decision.decision == 'Aprobar base' else 'no' }}">{{ decision.decision }}</span>
+         <small>{{ decision.fecha }} · {{ decision.comentario }}</small></p>
+    {% endif %}
+    <form method="post" action="{{ url_for('main.decision') }}">
+      <p>
+        <label><input type="radio" name="decision" value="Aprobar base" required> Aprobar base</label>
+        <label style="margin-left:18px"><input type="radio" name="decision" value="Rechazar base"> Rechazar base</label>
+      </p>
+      <p><textarea name="comentario" required placeholder="Comentario obligatorio"
+                   style="width:100%;min-height:70px;padding:8px;border-radius:8px;border:1px solid #243444;background:#0b1219;color:#e8eef5"></textarea></p>
+      <button type="submit" style="padding:10px 18px;border:0;border-radius:8px;background:#2ea043;color:#fff;font-size:15px;cursor:pointer">
+        Guardar decisión
+      </button>
+    </form>
+  </div>
+{% endif %}
+{% endblock %}

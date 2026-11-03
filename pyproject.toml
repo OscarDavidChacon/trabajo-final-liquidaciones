@@ -1,0 +1,23 @@
+[project]
+name = "app-depuracion"
+version = "0.1.0"
+description = "App de depuracion y analisis de datos - Pipeline_Liquidaciones_Ganado"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.1.3",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "python-dotenv>=1.0",
+]
+
+[tool.uv]
+link-mode = "copy"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]

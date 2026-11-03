@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block titulo %}Validar · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Validar · Cifras de control y veredicto</h1>
+
+{% if not validacion %}
+  <div class="panel">Todavía no se ha ejecutado la limpieza/validación. Vaya a <a href="{{ url_for('main.inicio') }}">Inicio</a> y pulse «Ejecutar limpieza y validación».</div>
+{% else %}
+  <div class="panel" style="text-align:center">
+    <span class="estado {{ 'ok' if validacion.veredicto == 'APROBADO' else 'no' }}"
+          style="font-size:26px;padding:12px 28px">{{ validacion.veredicto }}</span>
+    <p style="margin-top:12px">Suma de filas eliminadas: <strong>{{ validacion.eliminados_suma|miles }}</strong></p>
+  </div>
+
+  <div class="panel">
+    <h2>Cifras de control (antes / después)</h2>
+    <table>
+      <thead><tr><th>Métrica</th><th class="num">Antes</th><th class="num">Después</th><th class="num">Diferencia</th><th>Explicación</th></tr></thead>
+      <tbody>
+        {% for f in validacion.tabla %}
+        <tr>
+          <td>{{ f.metrica }}</td>
+          <td class="num">{{ f.antes|miles }}</td>
+          <td class="num">{{ f.despues|miles }}</td>
+          <td class="num">{{ f.diferencia|miles }}</td>
+          <td>{{ f.explicacion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Pruebas</h2>
+    <table>
+      <thead><tr><th>Prueba</th><th>Resultado</th></tr></thead>
+      <tbody>
+        {% for p in validacion.pruebas %}
+        <tr><td>{{ p.prueba }}</td><td><span class="estado {{ 'ok' if p.ok else 'no' }}">{{ 'OK' if p.ok else 'FALLA' }}</span></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Descargas</h2>
+    <p>
+      <a class="estado info" href="{{ url_for('main.descargar', archivo='base_limpia.csv') }}">base_limpia.csv</a>
+      <a class="estado info" href="{{ url_for('main.descargar', archivo='bitacora_limpieza.csv') }}">bitacora_limpieza.csv</a>
+      <a class="estado info" href="{{ url_for('main.descargar', archivo='cifras_control.csv') }}">cifras_control.csv</a>
+    </p>
+  </div>
+{% endif %}
+{% endblock %}

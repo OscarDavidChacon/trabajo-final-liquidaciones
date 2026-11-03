@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Pipeline_Liquidaciones_Ganado{% endblock %}</title>
+<style>
+  :root{
+    --fondo:#0f1720; --panel:#18232f; --borde:#243444; --texto:#e8eef5;
+    --suave:#9fb0c0; --acento:#3fb950; --azul:#4c8bf5; --rojo:#ff7b72; --amarillo:#e3b341;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto)}
+  header{background:var(--panel);border-bottom:1px solid var(--borde);padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header .marca{font-weight:700;font-size:17px}
+  header .marca span{color:var(--acento)}
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  nav a{color:var(--suave);text-decoration:none;padding:7px 12px;border-radius:8px;font-size:14px}
+  nav a:hover{background:#22303f;color:#fff}
+  main{max-width:1100px;margin:26px auto;padding:0 22px}
+  h1{font-size:22px;margin:0 0 6px}
+  h2{font-size:17px;margin:22px 0 10px}
+  .panel{background:var(--panel);border:1px solid var(--borde);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+  .estado{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600}
+  .ok{background:rgba(63,185,80,.18);color:#57d364;border:1px solid rgba(63,185,80,.4)}
+  .no{background:rgba(248,81,73,.18);color:var(--rojo);border:1px solid rgba(248,81,73,.4)}
+  .info{background:rgba(76,139,245,.18);color:#79b0ff;border:1px solid rgba(76,139,245,.4)}
+  .alerta{background:rgba(227,179,65,.18);color:var(--amarillo);border:1px solid rgba(227,179,65,.4)}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  mark.no{background:rgba(248,81,73,.25);color:#ffb4ae;padding:0 3px;border-radius:4px}
+  details.panel summary{cursor:pointer;font-weight:600;color:var(--texto)}
+  details.panel[open] summary{margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+  .kpi{background:#0b1219;border:1px solid var(--borde);border-radius:10px;padding:12px 14px}
+  .kpi .et{color:var(--suave);font-size:12px;display:block;margin-bottom:4px}
+  .kpi .va{font-size:20px;font-weight:700}
+  .lectura{color:var(--suave);font-size:13px;margin:10px 0 0}
+  .informe h3{font-size:15px;margin:14px 0 6px;color:var(--texto)}
+  .informe p{margin:6px 0}
+  .informe ul{margin:6px 0 6px 18px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--borde)}
+  th{color:var(--suave);font-weight:600}
+  code{background:#0b1219;padding:2px 6px;border-radius:6px}
+  footer{color:var(--suave);text-align:center;font-size:12px;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <div class="marca">Pipeline<span>_</span>Liquidaciones_Ganado</div>
+  <nav>
+    <a href="{{ url_for('main.inicio') }}">Inicio</a>
+    <a href="/conocer">Conocer</a>
+    <a href="/limpiar">Limpiar</a>
+    <a href="/validar">Validar</a>
+    <a href="/informe_calidad">Informe calidad</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/informe">Informe</a>
+  </nav>
+</header>
+<main>
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, texto in mensajes %}
+      <div class="panel"><span class="estado {{ 'no' if categoria == 'error' else 'info' }}">{{ texto }}</span></div>
+    {% endfor %}
+  {% endwith %}
+  {% block contenido %}{% endblock %}
+</main>
+<footer>Universidad Fundepos · Módulo 4 · App de depuración y análisis de datos</footer>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<div class="panel">
+  <h1>Pipeline_Liquidaciones_Ganado · App de depuración y análisis de datos</h1>
+  <p>
+    {% if archivos %}
+      <span class="estado ok">Archivo encontrado en Insumos ({{ archivos|length }})</span>
+    {% else %}
+      <span class="estado no">No se encontró archivo en Insumos</span>
+    {% endif %}
+  </p>
+  <p>Carpeta de Insumos: <code>{{ ruta_insumos }}</code> (solo lectura).</p>
+  {% if archivos %}
+  <table>
+    <thead><tr><th>Archivo en Insumos</th></tr></thead>
+    <tbody>
+      {% for a in archivos %}<tr><td>{{ a }}</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  <form method="post" action="{{ url_for('main.ejecutar') }}" style="margin-top:16px">
+    <button type="submit" style="padding:10px 18px;border:0;border-radius:8px;background:#2ea043;color:#fff;font-size:15px;cursor:pointer">
+      Ejecutar limpieza y validación
+    </button>
+    {% if limpieza_lista %}<span class="estado ok" style="margin-left:12px">Limpieza ejecutada</span>{% endif %}
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Cómo usar</h2>
+  <ol>
+    <li>Pulse «Ejecutar limpieza y validación» para procesar los datos empaquetados.</li>
+    <li>Recorra el menú superior: Conocer → Limpiar → Validar → Informe calidad → Dashboard → Informe.</li>
+    <li>La app funciona sin base de datos y sin servicios de IA: todo se calcula en memoria.</li>
+  </ol>
+</div>
+{% endblock %}

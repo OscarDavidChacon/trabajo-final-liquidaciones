@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Dashboard · Análisis</h1>
+
+<div class="panel">
+  <div class="grid">
+    <div class="kpi"><span class="et">TOTAL NETO A PAGAR (cabecera)</span><span class="va">₡{{ a.p1.totales.neto_a_pagar|miles }}</span></div>
+    <div class="kpi"><span class="et">Total colones (suma animales)</span><span class="va">₡{{ a.kpis.suma_total_colones|miles }}</span></div>
+    <div class="kpi"><span class="et">Total colones por animal (promedio · mediana)</span><span class="va">₡{{ a.kpis.promedio_total_colones|miles }} · ₡{{ a.kpis.mediana_total_colones|miles }}</span></div>
+    <div class="kpi"><span class="et">Rendimiento ponderado (Canal/Pie)</span><span class="va">{{ a.kpis.rendimiento_ponderado_pct|miles }} %</span></div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Gráfico 1 · Cómo se explica el pago neto (P1)</h2>
+  <div id="graf1" style="height:360px"></div>
+  <p id="lect1" class="lectura"></p>
+</div>
+
+<div class="panel">
+  <h2>Gráfico 2 · Qué animales aportan más valor (P2)</h2>
+  <div id="graf2" style="height:560px"></div>
+  <p id="lect2" class="lectura"></p>
+</div>
+
+<div class="panel">
+  <h2>Gráfico 3 · Cambios entre liquidaciones mensuales (P3)</h2>
+  <div id="graf3" style="height:340px"></div>
+  <p id="lect3" class="lectura"></p>
+</div>
+
+<div class="panel">
+  <h2>Gráfico 4 · Control mensual</h2>
+  <div id="graf4" style="height:340px"></div>
+  <p id="lect4" class="lectura"></p>
+</div>
+
+<div class="panel">
+  <h2>Distribución de Total colones</h2>
+  <div id="hist" style="height:340px"></div>
+  <p id="lect5" class="lectura"></p>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}?v=3"></script>
+{% endblock %}

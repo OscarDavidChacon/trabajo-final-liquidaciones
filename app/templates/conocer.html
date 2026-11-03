@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titulo %}Conocer · Pipeline_Liquidaciones_Ganado{% endblock %}
+{% block contenido %}
+<h1>Conocer · Inventario y hallazgos</h1>
+
+{% if error %}
+  <div class="panel"><span class="estado no">{{ error }}</span></div>
+{% else %}
+
+  <div class="panel">
+    <h2>Inventario</h2>
+    <div class="grid" style="margin-bottom:14px">
+      <div class="kpi"><span class="et">Tablas</span><span class="va">{{ resumen.tablas|miles }}</span></div>
+      <div class="kpi"><span class="et">Filas (detalle + resumen)</span><span class="va">{{ resumen.filas|miles }}</span></div>
+      <div class="kpi"><span class="et">Hallazgos</span><span class="va">{{ resumen.hallazgos|miles }}</span></div>
+      <div class="kpi"><span class="et">Hallazgos de calidad</span><span class="va">{{ resumen.calidad|miles }}</span></div>
+    </div>
+    <table>
+      <thead><tr><th>Tabla</th><th class="num">Filas</th><th class="num">Columnas</th><th class="num">Celdas vacías</th></tr></thead>
+      <tbody>
+        {% for t in inventario %}
+        <tr><td>{{ t.tabla }}</td><td class="num">{{ t.filas|miles }}</td><td class="num">{{ t.columnas|miles }}</td><td class="num">{{ t.vacios|miles }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Hallazgos</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Familia</th><th>Tabla</th><th>Descripción</th><th class="num">Cantidad</th><th>Tipo</th></tr></thead>
+      <tbody>
+        {% for h in hallazgos %}
+        <tr>
+          <td>{{ h.id }}</td>
+          <td>{{ h.familia }}</td>
+          <td>{{ h.tabla }}</td>
+          <td>{{ h.descripcion }}</td>
+          <td class="num">{{ h.cantidad|miles }}</td>
+          <td><span class="estado {{ 'ok' if h.tipo == 'Calidad' else 'info' }}">{{ h.tipo }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Perfil por tabla</h2>
+  {% for tabla, filas in perfiles.items() %}
+  <details class="panel">
+    <summary>Perfil de «{{ tabla }}» ({{ filas|length }} columnas)</summary>
+    <table>
+      <thead><tr><th>Columna</th><th>Tipo</th><th class="num">Vacías</th><th class="num">Distintos</th><th class="num">Mín</th><th class="num">Máx</th><th class="num">Media</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        {% for c in filas %}
+        <tr>
+          <td>{{ c.columna }}</td>
+          <td>{{ c.dtype }}</td>
+          <td class="num">{{ c.vacios|miles }}</td>
+          <td class="num">{{ c.distintos|miles }}</td>
+          <td class="num">{{ c.min|miles if c.min is not none else '—' }}</td>
+          <td class="num">{{ c.max|miles if c.max is not none else '—' }}</td>
+          <td class="num">{{ c.media|miles if c.media is not none else '—' }}</td>
+          <td>{{ c.ejemplo }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% endfor %}
+
+{% endif %}
+{% endblock %}
